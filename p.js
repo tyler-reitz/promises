@@ -1,7 +1,7 @@
 function Cromise(fn) {
   let state = 'pending',
-    value,
-    deferred
+    deferred = null,
+    value
 
   function resolve(newValue) {
     value = newValue
@@ -12,17 +12,28 @@ function Cromise(fn) {
     }
   }
 
-  function handle(onResolved) {
+  function handle(handler) {
     if (state === 'pending') {
-      deferred = onResolved
+      deferred = handler
       return
     }
 
-    onResolved(value)
+    if (!handler.onResolved) {
+      handler.resolved(value)
+      return
+    }
+
+    var ret = handler.onResolved(value)
+    handler.resolve(ret)
   }
 
   this.then = function(onResolved) {
-    handle(onResolved)
+    return new Cromise((resolve) => {
+      handle({
+        onResolved: onResolved,
+        resolve: resolve
+      })
+    })
   }
 
   fn(resolve)
