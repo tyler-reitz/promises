@@ -28,7 +28,7 @@ function Cromise(fn) {
   }
 
   this.then = function(onResolved) {
-    return new Cromise((resolve) => {
+    return new Cromise(resolve => {
       handle({
         onResolved: onResolved,
         resolve: resolve
@@ -40,16 +40,17 @@ function Cromise(fn) {
 }
 
 function doSomething() {
-  return new Cromise((resolve) => {
+  return new Cromise(resolve => {
     let value = 42
     resolve(value)
   })
 }
 
-doSomething().then((value) => {
-  console.log(`Got a value: ${value}`)
-})
-
-doSomething().then((value) => {
-  console.log(`Got the same value again: ${value}`)
-})
+doSomething()
+  .then(result => {
+    console.log('first result', result)
+    return 88
+  })
+  .then(result2 => {
+    console.log('second result', result2)
+  })
