@@ -1,9 +1,13 @@
-function Cromise(fn) {
+function Chronice(fn) {
   let state = 'pending',
     deferred = null,
     value
 
   function resolve(newValue) {
+    if (newValue && typeof newValue.then === 'function') {
+      newValue.then(resolve)
+      return
+    }
     value = newValue
     state = 'resolved'
 
